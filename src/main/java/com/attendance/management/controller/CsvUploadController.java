@@ -1,7 +1,10 @@
 package com.attendance.management.controller;
 
+import com.attendance.management.domain.AttendanceIncident;
 import com.attendance.management.domain.AttendanceRecord;
+import com.attendance.management.repository.IAttendanceIncidentRepository;
 import com.attendance.management.repository.IAttendanceRecordRepository;
+import com.attendance.management.service.IAttendanceIncidentService;
 import com.attendance.management.service.ICsvParserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +21,19 @@ import java.util.Map;
 public class CsvUploadController {
 
     private final ICsvParserService csvParserService;
-    private final IAttendanceRecordRepository repository;
+    private final IAttendanceRecordRepository recordRepository;
+    private final IAttendanceIncidentService incidentService;
+    private final IAttendanceIncidentRepository incidentRepository;
 
     @Autowired
     public CsvUploadController(ICsvParserService csvParserService,
-                               IAttendanceRecordRepository repository) {
+                               IAttendanceRecordRepository recordRepository,
+                               IAttendanceIncidentService incidentService,
+                               IAttendanceIncidentRepository incidentRepository) {
         this.csvParserService = csvParserService;
-        this.repository = repository;
+        this.recordRepository = recordRepository;
+        this.incidentService = incidentService;
+        this.incidentRepository = incidentRepository;
     }
 
     @PostMapping("/upload")
@@ -37,11 +46,18 @@ public class CsvUploadController {
         try {
             String csvContent = new String(file.getBytes(), StandardCharsets.UTF_8);
             List<AttendanceRecord> records = csvParserService.parse(csvContent);
-            repository.saveAll(records);
+            recordRepository.saveAll(records);
+
+            // Detect and store incidents
+            List<AttendanceIncident> allIncidents = records.stream()
+                    .flatMap(record -> incidentService.detectIncidents(record).stream())
+                    .toList();
+            incidentRepository.saveAll(allIncidents);
 
             return ResponseEntity.ok(Map.of(
                     "message", "File uploaded successfully",
-                    "recordCount", records.size()
+                    "recordCount", records.size(),
+                    "incidentCount", allIncidents.size()
             ));
 
         } catch (IOException e) {

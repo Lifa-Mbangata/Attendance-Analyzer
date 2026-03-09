@@ -1,7 +1,10 @@
 package com.attendance.management;
 
 import com.attendance.management.domain.AttendanceRecord;
+import com.attendance.management.domain.IncidentType;
+import com.attendance.management.repository.IAttendanceIncidentRepository;
 import com.attendance.management.repository.IAttendanceRecordRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +26,16 @@ class AttendanceAnalyzerIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private IAttendanceRecordRepository repository;
+    private IAttendanceRecordRepository recordRepository;
+
+    @Autowired
+    private IAttendanceIncidentRepository incidentRepository;
+
+    @BeforeEach
+    void setUp() {
+        recordRepository.clear();
+        incidentRepository.clear();
+    }
 
     // --- Test 1: Full pipeline — upload CSV, assert records stored ---
     @Test
@@ -35,7 +47,7 @@ class AttendanceAnalyzerIntegrationTest {
                         "\n" +
                         "Tuesday - 05/08/2025\n" +
                         "1001,John Smith,Work Day,1,07:50,17:15,,,,,,,\n" +
-                        "1002,Jane Doe,Work Day,1,,,,,,,Annual Leave,\n";
+                        "1002,Jane Doe,Work Day,1,,,,,,,,Annual Leave,\n";
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "attendance.csv", "text/csv", csvContent.getBytes()
@@ -44,9 +56,12 @@ class AttendanceAnalyzerIntegrationTest {
         mockMvc.perform(multipart("/api/attendance/upload").file(file))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("File uploaded successfully"))
-                .andExpect(jsonPath("$.recordCount").value(4));
+                .andExpect(jsonPath("$.recordCount").value(4))
+                .andExpect(jsonPath("$.incidentCount").value(1)); // Jane Doe late on Monday
 
-        assertEquals(4, repository.findAll().size());
+        assertEquals(4, recordRepository.findAll().size());
+        assertEquals(1, incidentRepository.findAll().size());
+        assertEquals(IncidentType.LATE_ARRIVAL, incidentRepository.findAll().get(0).getIncidentType());
     }
 
     // --- Test 2: Correct employee records are stored ---
@@ -63,7 +78,7 @@ class AttendanceAnalyzerIntegrationTest {
         mockMvc.perform(multipart("/api/attendance/upload").file(file))
                 .andExpect(status().isOk());
 
-        List<AttendanceRecord> records = repository.findByEmployeeId("1001");
+        List<AttendanceRecord> records = recordRepository.findByEmployeeId("1001");
         assertEquals(1, records.size());
         assertEquals("John Smith", records.get(0).getEmployee().getEmployeeName());
     }
@@ -85,7 +100,7 @@ class AttendanceAnalyzerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.recordCount").value(1));
 
-        assertEquals(1, repository.findAll().size());
+        assertEquals(1, recordRepository.findAll().size());
     }
 
     // --- Test 4: Empty file returns 400 ---
