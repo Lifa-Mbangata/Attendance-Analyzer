@@ -70,6 +70,11 @@ The server will start on `http://localhost:8080` by default.
 - Content-Type: `multipart/form-data`
 - Parameter: `file` (CSV file)
 
+### Reports
+- Employee Summary: `GET /api/reports/employee/{id}`
+- Department Summaries: `GET /api/reports/departments`
+- Company Summary: `GET /api/reports/company`
+
 ## Testing
 The project includes a comprehensive suite of unit and integration tests. To execute the tests, run:
 ```bash

@@ -16,6 +16,7 @@ public class AttendanceRecordFactory {
         Employee employee = new Employee.Builder()
                 .setEmployeeId(row[0].trim())
                 .setEmployeeName(row[1].trim())
+                .setDepartment(row[3].trim())
                 .build();
 
         DayType dayType = parseDayType(row[2].trim());
