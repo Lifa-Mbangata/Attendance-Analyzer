@@ -5,12 +5,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class AttendanceSummary {
-    private final String entityName;
-    private final long totalNormalMinutes;
-    private final long totalWorkedMinutes;
-    private final long totalShortMinutes;
-    private final long totalExtraMinutes;
-    private final Map<IncidentType, Long> incidentTypeCounts;
+
+    private String entityName;
+    private long totalNormalMinutes;
+    private long totalWorkedMinutes;
+    private long totalShortMinutes;
+    private long totalExtraMinutes;
+
+    private Map<IncidentType, Long> incidentTypeCounts = new TreeMap<>();
+
+    public AttendanceSummary() {}
 
     private AttendanceSummary(Builder builder) {
         this.entityName = builder.entityName;

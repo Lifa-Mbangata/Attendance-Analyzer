@@ -5,21 +5,17 @@ import java.time.LocalTime;
 
 public class AttendanceRecord {
 
-    private final Employee employee;
-    private final LocalDate date;
-    private final DayType dayType;
-    private final LocalTime clockIn;
-    private final LocalTime clockOut;
-    private final String leaveComment;
+    private Employee employee;
 
-    protected AttendanceRecord() {
-        this.employee = null;
-        this.date = null;
-        this.dayType = null;
-        this.clockIn = null;
-        this.clockOut = null;
-        this.leaveComment = null;
-    }
+    private LocalDate date;
+
+    private DayType dayType;
+
+    private LocalTime clockIn;
+    private LocalTime clockOut;
+    private String leaveComment;
+
+    public AttendanceRecord() {}
 
     private AttendanceRecord(Builder builder) {
         this.employee = builder.employee;
@@ -41,18 +37,6 @@ public class AttendanceRecord {
     public boolean hasClockOut() { return clockOut != null; }
     public boolean hasLeaveComment() {
         return leaveComment != null && !leaveComment.isBlank();
-    }
-
-    @Override
-    public String toString() {
-        return "AttendanceRecord{" +
-                "employee=" + employee +
-                ", date=" + date +
-                ", dayType=" + dayType +
-                ", clockIn=" + clockIn +
-                ", clockOut=" + clockOut +
-                ", leaveComment='" + leaveComment + '\'' +
-                '}';
     }
 
     public static class Builder {
@@ -90,16 +74,6 @@ public class AttendanceRecord {
 
         public Builder setLeaveComment(String leaveComment) {
             this.leaveComment = leaveComment;
-            return this;
-        }
-
-        public Builder copy(AttendanceRecord record) {
-            this.employee = record.employee;
-            this.date = record.date;
-            this.dayType = record.dayType;
-            this.clockIn = record.clockIn;
-            this.clockOut = record.clockOut;
-            this.leaveComment = record.leaveComment;
             return this;
         }
 

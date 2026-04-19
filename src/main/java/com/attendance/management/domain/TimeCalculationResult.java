@@ -1,22 +1,16 @@
 package com.attendance.management.domain;
 
+/**
+ * Result object for time calculations per attendance record
+ */
 public class TimeCalculationResult {
-
     private final long normalMinutes;
     private final long workedMinutes;
     private final long shortMinutes;
     private final long extraMinutes;
     private final String leaveComment;
 
-    protected TimeCalculationResult() {
-        this.normalMinutes = 0;
-        this.workedMinutes = 0;
-        this.shortMinutes = 0;
-        this.extraMinutes = 0;
-        this.leaveComment = null;
-    }
-
-    private TimeCalculationResult(Builder builder) {
+    public TimeCalculationResult(Builder builder) {
         this.normalMinutes = builder.normalMinutes;
         this.workedMinutes = builder.workedMinutes;
         this.shortMinutes = builder.shortMinutes;
@@ -30,21 +24,10 @@ public class TimeCalculationResult {
     public long getExtraMinutes() { return extraMinutes; }
     public String getLeaveComment() { return leaveComment; }
 
-    public String getNormalTimeFormatted() {
-        return formatMinutes(normalMinutes);
-    }
-
-    public String getWorkedTimeFormatted() {
-        return formatMinutes(workedMinutes);
-    }
-
-    public String getShortTimeFormatted() {
-        return formatMinutes(shortMinutes);
-    }
-
-    public String getExtraTimeFormatted() {
-        return formatMinutes(extraMinutes);
-    }
+    public String getNormalTimeFormatted() { return formatMinutes(normalMinutes); }
+    public String getWorkedTimeFormatted() { return formatMinutes(workedMinutes); }
+    public String getShortTimeFormatted() { return formatMinutes(shortMinutes); }
+    public String getExtraTimeFormatted() { return formatMinutes(extraMinutes); }
 
     private String formatMinutes(long totalMinutes) {
         long hours = totalMinutes / 60;
@@ -92,15 +75,6 @@ public class TimeCalculationResult {
 
         public Builder setLeaveComment(String leaveComment) {
             this.leaveComment = leaveComment;
-            return this;
-        }
-
-        public Builder copy(TimeCalculationResult result) {
-            this.normalMinutes = result.normalMinutes;
-            this.workedMinutes = result.workedMinutes;
-            this.shortMinutes = result.shortMinutes;
-            this.extraMinutes = result.extraMinutes;
-            this.leaveComment = result.leaveComment;
             return this;
         }
 

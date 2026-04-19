@@ -4,17 +4,12 @@ import java.time.LocalDate;
 
 public class AttendanceIncident {
 
-    private final Employee employee;
-    private final LocalDate date;
-    private final IncidentType incidentType;
-    private final String description;
+    private Employee employee;
+    private LocalDate date;
+    private IncidentType incidentType;
+    private String description;
 
-    protected AttendanceIncident() {
-        this.employee = null;
-        this.date = null;
-        this.incidentType = null;
-        this.description = null;
-    }
+    public AttendanceIncident() {}
 
     private AttendanceIncident(Builder builder) {
         this.employee = builder.employee;
@@ -23,10 +18,21 @@ public class AttendanceIncident {
         this.description = builder.description;
     }
 
-    public Employee getEmployee() { return employee; }
-    public LocalDate getDate() { return date; }
-    public IncidentType getIncidentType() { return incidentType; }
-    public String getDescription() { return description; }
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public IncidentType getIncidentType() {
+        return incidentType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     @Override
     public String toString() {

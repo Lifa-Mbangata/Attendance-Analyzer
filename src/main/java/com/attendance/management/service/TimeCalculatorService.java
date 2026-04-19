@@ -25,7 +25,6 @@ public class TimeCalculatorService implements ITimeCalculatorService {
         int standardMinutes = (dayOfWeek == DayOfWeek.FRIDAY) ? FRI_STANDARD_MINUTES : MON_THU_STANDARD_MINUTES;
         int lunchMinutes = (dayOfWeek == DayOfWeek.FRIDAY) ? FRI_LUNCH_MINUTES : MON_THU_LUNCH_MINUTES;
 
-        // If no clock-in and no clock-out
         if (!record.hasClockIn() && !record.hasClockOut()) {
             if (record.hasLeaveComment()) {
                 return new TimeCalculationResult.Builder()
@@ -45,7 +44,6 @@ public class TimeCalculatorService implements ITimeCalculatorService {
             }
         }
 
-        // If one of the punches is missing (but no leave comment)
         if (!record.hasClockIn() || !record.hasClockOut()) {
             return new TimeCalculationResult.Builder()
                     .setNormalMinutes(0)
@@ -55,13 +53,11 @@ public class TimeCalculatorService implements ITimeCalculatorService {
                     .build();
         }
 
-        // Both punches are present
         LocalTime actualClockIn = record.getClockIn();
         LocalTime effectiveClockIn = actualClockIn.isBefore(START_TIME_LIMIT) ? START_TIME_LIMIT : actualClockIn;
         LocalTime actualClockOut = record.getClockOut();
 
         if (actualClockOut.isBefore(effectiveClockIn)) {
-            // This case should ideally not happen but handling it for robustness
             return new TimeCalculationResult.Builder()
                     .setNormalMinutes(0)
                     .setWorkedMinutes(0)

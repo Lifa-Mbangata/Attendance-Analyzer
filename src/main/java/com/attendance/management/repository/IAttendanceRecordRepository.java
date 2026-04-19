@@ -1,7 +1,6 @@
 package com.attendance.management.repository;
 
 import com.attendance.management.domain.AttendanceRecord;
-
 import java.time.LocalDate;
 import java.util.List;
 

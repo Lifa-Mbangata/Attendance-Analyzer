@@ -1,27 +1,35 @@
 package com.attendance.management.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Employee {
 
-    private final String employeeId;
-    private final String employeeName;
-    private final String department;
+    private String employeeId;
 
-    protected Employee() {
-        this.employeeId = null;
-        this.employeeName = null;
-        this.department = null;
-    }
+    private String employeeName;
 
-    private Employee(Builder builder) {
-        this.employeeId = builder.employeeId;
-        this.employeeName = builder.employeeName;
-        this.department = builder.department;
+    private String department;
+
+    private List<AttendanceRecord> attendanceRecords = new ArrayList<>();
+
+    public Employee() {}
+
+    public Employee(String employeeId, String employeeName, String department) {
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.department = department;
     }
 
     public String getEmployeeId() { return employeeId; }
     public String getEmployeeName() { return employeeName; }
     public String getDepartment() { return department; }
+    public List<AttendanceRecord> getAttendanceRecords() { return attendanceRecords; }
 
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
+    public void setEmployeeName(String employeeName) { this.employeeName = employeeName; }
+    public void setDepartment(String department) { this.department = department; }
+    
     @Override
     public String toString() {
         return "Employee{" +
@@ -51,15 +59,9 @@ public class Employee {
             return this;
         }
 
-        public Builder copy(Employee employee) {
-            this.employeeId = employee.employeeId;
-            this.employeeName = employee.employeeName;
-            this.department = employee.department;
-            return this;
-        }
-
         public Employee build() {
-            return new Employee(this);
+            String resolvedDepartment = department == null || department.isBlank() ? "Unknown" : department;
+            return new Employee(employeeId, employeeName, resolvedDepartment);
         }
     }
 }
