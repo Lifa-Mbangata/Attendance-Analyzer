@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -72,5 +73,41 @@ class AttendanceReportIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.entityName == 'Department: 1')]").exists())
                 .andExpect(jsonPath("$[?(@.entityName == 'Department: 2')]").exists());
+    }
+
+    @Test
+    void shouldGetEmployeeIncidents() throws Exception {
+        mockMvc.perform(get("/api/reports/employee/1002/incidents"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].date").value("2025-08-04T00:00:00"))
+                .andExpect(jsonPath("$[0].dayOfWeek").value("Monday"))
+                .andExpect(jsonPath("$[0].type").value("LATE_ARRIVAL"))
+                .andExpect(jsonPath("$[0].time").value("08:30"))
+                .andExpect(jsonPath("$[0].details", startsWith("Late arrival at 08:30")));
+    }
+
+    @Test
+    void shouldReturnEmptyIncidentsForEmployeeWithoutIncidents() throws Exception {
+        mockMvc.perform(get("/api/reports/employee/1001/incidents"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void shouldGetCompanyIncidentReport() throws Exception {
+        mockMvc.perform(get("/api/reports/company/incidents"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].employeeId").value("1001"))
+                .andExpect(jsonPath("$[0].entityName").value("John Smith"))
+                .andExpect(jsonPath("$[0].totalIncidents").value(0))
+                .andExpect(jsonPath("$[0].incidents.length()").value(0))
+                .andExpect(jsonPath("$[1].employeeId").value("1002"))
+                .andExpect(jsonPath("$[1].entityName").value("Jane Doe"))
+                .andExpect(jsonPath("$[1].totalIncidents").value(1))
+                .andExpect(jsonPath("$[1].incidents.length()").value(1))
+                .andExpect(jsonPath("$[1].incidents[0].type").value("LATE_ARRIVAL"))
+                .andExpect(jsonPath("$[1].incidentTypeCounts.LATE_ARRIVAL").value(1));
     }
 }
