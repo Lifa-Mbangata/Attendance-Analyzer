@@ -39,6 +39,39 @@ Expected response:
 }
 ```
 
+## 1B) Backend (Render using Docker)
+
+If you deploy on Render, create a **Web Service** and set runtime/language to **Docker**.
+
+### Render settings
+- Branch: `master`
+- Root directory: (leave empty)
+- Runtime: `Docker`
+- Health check path: `/api/attendance/health`
+
+### Required Render environment variables
+
+```env
+CORS_ALLOWED_ORIGIN_PATTERNS=https://your-frontend.vercel.app,https://*.vercel.app,http://localhost:5173,http://localhost:3000
+```
+
+`PORT` is provided automatically by Render.
+
+### Verify after deploy
+
+```text
+GET https://your-backend-name.onrender.com/api/attendance/health
+```
+
+Expected:
+
+```json
+{
+  "status": "UP",
+  "message": "Attendance API is running"
+}
+```
+
 ## 2) Frontend (Vercel, React/Vite)
 
 In your frontend repo, add:
@@ -46,7 +79,7 @@ In your frontend repo, add:
 ### `.env.production`
 
 ```env
-VITE_API_BASE_URL=https://your-backend-domain.up.railway.app
+VITE_API_BASE_URL=https://your-backend-domain
 ```
 
 ### `src/api.js` (exact pattern)

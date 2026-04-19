@@ -1,0 +1,11 @@
+.git
+.gitignore
+.idea
+target
+
+*.iml
+*.log
+
+README.md
+DEPLOYMENT.md
+qodana.yaml
