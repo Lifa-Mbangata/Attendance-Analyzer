@@ -12,7 +12,7 @@ The Attendance Analyzer is a Spring Boot-based application designed to process a
 - Weekend Exclusion: Automatically ignores Saturday and Sunday records from analysis.
 
 ## Technical Stack
-- Language: Java 24
+- Language: Java 21
 - Framework: Spring Boot 3.4.2
 - Build Tool: Maven
 - Parsing Library: OpenCSV 5.9
@@ -72,8 +72,13 @@ The server will start on `http://localhost:8080` by default.
 
 ### Reports
 - Employee Summary: `GET /api/reports/employee/{id}`
+- Employee Incidents: `GET /api/reports/employee/{id}/incidents`
 - Department Summaries: `GET /api/reports/departments`
 - Company Summary: `GET /api/reports/company`
+- Company Incident Report: `GET /api/reports/company/incidents`
+
+## Deployment
+For exact Railway + Vercel setup and required environment variables, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ## Testing
 The project includes a comprehensive suite of unit and integration tests. To execute the tests, run:
